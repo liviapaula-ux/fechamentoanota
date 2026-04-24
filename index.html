@@ -13,6 +13,8 @@
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -41,10 +43,13 @@
             </Card>
         );
 
-        const ProgressBar = ({ label, percentage, color = "bg-red-500", icon = "" }) => (
+        const ProgressBar = ({ label, percentage, color = "bg-red-500", icon = "", subtitle = "" }) => (
             <div className="mb-4 last:mb-0">
-                <div className="flex justify-between text-sm mb-1.5">
-                    <span className="font-medium text-slate-700">{icon} {label}</span>
+                <div className="flex justify-between items-end mb-1.5">
+                    <div>
+                        <span className="font-medium text-slate-700">{icon} {label}</span>
+                        {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+                    </div>
                     <span className="font-bold text-slate-800">{percentage}%</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2.5">
@@ -58,10 +63,147 @@
             Users: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>,
             Heart: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>,
             Smile: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
-            TrendingDown: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+            TrendingDown: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>,
+            Calendar: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>,
+            Briefcase: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>,
+            MapPin: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>,
+            Baby: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         };
 
-        // PÁGINA 1: VISÃO GERAL
+        // PÁGINA 1: PERFIL DEMOGRÁFICO (NOVA)
+        const Demographics = () => (
+            <div className="space-y-6 animate-fade-in">
+                {/* KPIs Principais */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatBox title="Idade Média" value="30,4 anos" subtitle="População Jovem" icon={Icons.Calendar} colorClass="text-purple-500" bgClass="bg-purple-50" />
+                    <StatBox title="Tempo de Casa (Média)" value="2,2 anos" subtitle="75% < 3 anos" icon={Icons.Briefcase} colorClass="text-blue-500" bgClass="bg-blue-50" />
+                    <StatBox title="Têm Dependentes" value="37%" subtitle="Média: 1,77 dependentes" icon={Icons.Baby} colorClass="text-emerald-500" bgClass="bg-emerald-50" />
+                    <StatBox title="Solteiros" value="75%" subtitle="Casados: 22,9%" icon={Icons.Heart} colorClass="text-pink-500" bgClass="bg-pink-50" />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Gerações e Gênero */}
+                    <div className="space-y-6">
+                        <Card>
+                            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">🧬 Gerações</h3>
+                            <div className="mb-4">
+                                <ProgressBar label="Millennials" percentage={63.4} color="bg-purple-500" subtitle="241 colaboradores - Maioria" />
+                                <ProgressBar label="Geração Z" percentage={33.9} color="bg-indigo-400" subtitle="129 colaboradores" />
+                                <ProgressBar label="Geração X" percentage={2.6} color="bg-slate-300" subtitle="10 colaboradores" />
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">⚖️ Equilíbrio de Gênero</h3>
+                            <div className="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 items-center justify-center">
+                                <div className="text-center w-1/2 border-r border-slate-200">
+                                    <p className="text-3xl mb-1">👨</p>
+                                    <p className="text-xl font-bold text-slate-800">53,7%</p>
+                                    <p className="text-xs text-slate-500">Masculino</p>
+                                </div>
+                                <div className="text-center w-1/2">
+                                    <p className="text-3xl mb-1">👩</p>
+                                    <p className="text-xl font-bold text-slate-800">46,3%</p>
+                                    <p className="text-xs text-slate-500">Feminino</p>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+
+                    {/* Geografia e Dependentes */}
+                    <div className="space-y-6">
+                        <Card>
+                            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">📍 Distribuição Geográfica</h3>
+                            <ProgressBar label="Sudeste" percentage={50} color="bg-red-500" subtitle="SP: 25.8% | RJ: 14.2% | MG: 10%" />
+                            <ProgressBar label="Sul" percentage={26.1} color="bg-orange-400" subtitle="RS: 17.6% | PR: 5.3% | SC: 3.2%" />
+                            <ProgressBar label="Nordeste" percentage={17.9} color="bg-yellow-400" />
+                            
+                            <div className="mt-5 pt-4 border-t border-slate-100">
+                                <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Top 3 Cidades</p>
+                                <div className="flex gap-2">
+                                    <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-md font-medium">1º SP (10.5%)</span>
+                                    <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-md font-medium">2º RJ (8.2%)</span>
+                                    <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-md font-medium">3º Rio Grande (7.9%)</span>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">👨‍👩‍👧 Perfil de Dependentes</h3>
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="bg-emerald-100 text-emerald-700 p-3 rounded-xl font-bold text-xl">37%</div>
+                                <p className="text-sm text-slate-600 leading-tight">Dos colaboradores possuem dependentes no plano de saúde.</p>
+                            </div>
+                            <ul className="space-y-2 mt-4">
+                                <li className="flex justify-between items-center text-sm">
+                                    <span className="text-slate-600">Com apenas 1 dependente</span>
+                                    <span className="font-bold">48,9%</span>
+                                </li>
+                                <li className="flex justify-between items-center text-sm">
+                                    <span className="text-slate-600">Com 2 dependentes</span>
+                                    <span className="font-bold">29,9%</span>
+                                </li>
+                            </ul>
+                        </Card>
+                    </div>
+
+                    {/* Senioridade e Retenção */}
+                    <div className="space-y-6">
+                        <Card className="bg-slate-800 text-white border-none">
+                            <h3 className="text-lg font-bold mb-4 border-b border-slate-700 pb-2 flex items-center gap-2">
+                                📊 Distribuição por Grade
+                            </h3>
+                            <div className="space-y-4 mt-4">
+                                <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span className="text-slate-300">Grades 6-9 (Pleno/Sênior)</span>
+                                        <span className="font-bold text-white">80%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-700 rounded-full h-2">
+                                        <div className="bg-blue-400 h-2 rounded-full" style={{ width: '80%' }}></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span className="text-slate-300">Grades 10-14 (Liderança)</span>
+                                        <span className="font-bold text-white">17,4%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-700 rounded-full h-2">
+                                        <div className="bg-purple-400 h-2 rounded-full" style={{ width: '17.4%' }}></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span className="text-slate-300">Grades 1-5 (Júnior)</span>
+                                        <span className="font-bold text-white">2,6%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-700 rounded-full h-2">
+                                        <div className="bg-emerald-400 h-2 rounded-full" style={{ width: '2.6%' }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">⏳ Tempo de Casa</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-blue-50 p-4 rounded-xl text-center">
+                                    <p className="text-xs text-blue-600 font-semibold mb-1">Menos de 3 anos</p>
+                                    <p className="text-2xl font-black text-blue-800">75%</p>
+                                </div>
+                                <div className="bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
+                                    <p className="text-xs text-slate-500 font-semibold mb-1">5+ anos (Cresc. Acel.)</p>
+                                    <p className="text-2xl font-black text-slate-700">4,2%</p>
+                                </div>
+                            </div>
+                            <p className="text-xs text-center text-slate-400 mt-4 italic">Mediana de tempo de casa: 1,9 anos</p>
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // PÁGINA 2: VISÃO GERAL (MANTIDA EXATAMENTE IGUAL)
         const Overview = () => (
             <div className="space-y-6 animate-fade-in">
                 {/* KPIs Principais */}
@@ -162,7 +304,7 @@
             </div>
         );
 
-        // PÁGINA 2: PLANTÕES
+        // PÁGINA 3: PLANTÕES (MANTIDA EXATAMENTE IGUAL)
         const ThemeCard = ({ priority, number, title, percentage, whatItMeans, examples, needs, problems }) => {
             const colors = {
                 critical: "border-red-200 bg-red-50 text-red-800",
@@ -377,7 +519,7 @@
 
         // APP PRINCIPAL
         const App = () => {
-            const [activeTab, setActiveTab] = useState('overview');
+            const [activeTab, setActiveTab] = useState('demographics'); // Define Demographics como a aba inicial
 
             return (
                 <div className="min-h-screen pb-12">
@@ -393,18 +535,24 @@
                                 </div>
                                 
                                 {/* Tabs de Navegação */}
-                                <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg">
+                                <div className="flex flex-wrap gap-2 bg-slate-100 p-1 rounded-lg">
+                                    <button 
+                                        onClick={() => setActiveTab('demographics')}
+                                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${activeTab === 'demographics' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'}`}
+                                    >
+                                        👥 Perfil Demográfico
+                                    </button>
                                     <button 
                                         onClick={() => setActiveTab('overview')}
                                         className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${activeTab === 'overview' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'}`}
                                     >
-                                        📊 Visão Geral
+                                        📊 Visão da Migração
                                     </button>
                                     <button 
                                         onClick={() => setActiveTab('support')}
                                         className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${activeTab === 'support' ? 'bg-white text-red-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'}`}
                                     >
-                                        🎧 Plantões de Atendimento
+                                        🎧 Plantões / Qualitativo
                                     </button>
                                 </div>
                             </div>
@@ -413,7 +561,9 @@
 
                     {/* Conteúdo Principal */}
                     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-                        {activeTab === 'overview' ? <Overview /> : <Support />}
+                        {activeTab === 'demographics' && <Demographics />}
+                        {activeTab === 'overview' && <Overview />}
+                        {activeTab === 'support' && <Support />}
                     </main>
                 </div>
             );
